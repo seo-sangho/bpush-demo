@@ -1,4 +1,5 @@
 'use client';
+
 import { useEffect } from 'react';
 import Link from 'next/link';
 import ThemeChanger from './DarkSwitch';
@@ -14,7 +15,6 @@ export const Navbar = () => {
     const getPermission = async () => {
       const permission = await Notification.requestPermission();
       if (permission !== 'granted') {
-        // alert(`브라우저의 알림이 꺼져 있습니다.`);
         toast({
           title: '알림',
           description: '브라우저의 알림이 꺼져 있습니다.',
@@ -121,6 +121,7 @@ export const Navbar = () => {
                   className='inline-block px-4 py-2 text-lg font-normal text-gray-800 no-underline rounded-md dark:text-gray-200 hover:text-indigo-500 focus:text-indigo-500 focus:bg-indigo-100 focus:outline-none dark:focus:bg-gray-800'
                 >
                   {menu}
+                </Link>
               </li>
             ))}
           </ul>

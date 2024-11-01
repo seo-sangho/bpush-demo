@@ -4,9 +4,9 @@ import { useEffect } from 'react';
 import { getMessaging, onMessage } from 'firebase/messaging';
 import useFcmToken from '@/utils/hooks/useFcmToken';
 import firebaseApp from '@/utils/firebase-messaging-sw';
-<<<<<<< HEAD
 import axios from 'axios';
 
+// 서버에 fcmtoken을 저장
 function dispatchToken(fcmToken: string) {
   const url = process.env.NEXT_PUBLIC_BPUSH_API_TOKEN_SAVE ?? '';
   const USER = process.env.NEXT_PUBLIC_BPUSH_USER ?? '';
@@ -36,12 +36,6 @@ export default function FcmClient() {
 
   // 서버에 토큰을 저장
   dispatchToken(fcmToken);
-=======
-
-export default function FcmClient() {
-  const { fcmToken, notificationPermissionStatus } = useFcmToken();
-  fcmToken && console.log('FCM token:', fcmToken);
->>>>>>> 54afb5aa86bca9dd816d908a182634feca141dc8
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
