@@ -1,6 +1,5 @@
 # B-Push - Brower PUSH
 
-스
 멀티브라우저, 멀티디바이스 Push를 위한 B-Push Project
 
 ![image](https://user-images.githubusercontent.com/1884712/121497169-03228680-c990-11eb-975a-e77fddc43de0.png)
@@ -25,11 +24,9 @@ cd bpush-demo
 npm install
 ```
 
-### 5\. Run Dev Server
+### 4\. Run Dev Server
 
 ```
-yarn dev
-# or
 npm run dev
 ```
 
