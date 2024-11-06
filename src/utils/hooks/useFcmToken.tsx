@@ -23,7 +23,7 @@ const useFcmToken = () => {
           // Check if permission is granted before retrieving the token
           if (permission === 'granted') {
             const currentToken = await getToken(messaging, {
-              vapidKey: process.env.VAPID_KEY,
+              vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
             });
             if (currentToken) {
               setToken(currentToken);
@@ -33,6 +33,8 @@ const useFcmToken = () => {
                 'No registration token available. Request permission to generate one.',
               );
             }
+          } else {
+            //
           }
         }
       } catch (error) {

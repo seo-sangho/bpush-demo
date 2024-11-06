@@ -32,7 +32,7 @@ export default async function RootLayout({
           <Navbar />
           <div>{children}</div>
           <Footer />
-          <PopupWidget />
+          {/* <PopupWidget /> */}
           <Toaster />
         </ThemeProvider>
       </body>
