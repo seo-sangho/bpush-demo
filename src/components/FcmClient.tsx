@@ -14,7 +14,7 @@ function dispatchToken(fcmToken: string, notificationPermissionStatus: string) {
   const COM_CODE = process.env.NEXT_PUBLIC_BPUSH_COMPANY ?? '';
 
   // axios test
-  if (notificationPermissionStatus === 'grant' && fcmToken) {
+  if (notificationPermissionStatus === 'granted' && fcmToken) {
     axios
       .post(url, {
         userId: USER,
