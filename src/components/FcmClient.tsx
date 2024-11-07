@@ -9,14 +9,15 @@ import { useToast } from '@/hooks/use-toast';
 
 // 서버에 fcmtoken을 저장
 function dispatchToken(fcmToken: string, notificationPermissionStatus: string) {
-  const url = process.env.NEXT_PUBLIC_BPUSH_API_TOKEN_SAVE ?? '';
+  const url = process.env.NEXT_PUBLIC_BPUSH_API ?? '';
+  const api = process.env.NEXT_PUBLIC_BPUSH_API_TOKEN_SAVE ?? '';
   const USER = process.env.NEXT_PUBLIC_BPUSH_USER ?? '';
   const COM_CODE = process.env.NEXT_PUBLIC_BPUSH_COMPANY ?? '';
 
   // axios test
   if (notificationPermissionStatus === 'granted' && fcmToken) {
     axios
-      .post(url, {
+      .post(url + api, {
         userId: USER,
         pushToken: fcmToken,
         companyCode: COM_CODE,
