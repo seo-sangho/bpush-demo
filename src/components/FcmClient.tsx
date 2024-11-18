@@ -12,7 +12,7 @@ export function dispatchToken(
   fcmToken: string,
   notificationPermissionStatus: string,
 ) {
-  // console.log(`${fcmToken} ${notificationPermissionStatus}`);
+  console.log(`Noti: ${notificationPermissionStatus}`);
   const url = process.env.NEXT_PUBLIC_BPUSH_API ?? '';
   const api = process.env.NEXT_PUBLIC_BPUSH_API_TOKEN_SAVE ?? '';
   const USER = process.env.NEXT_PUBLIC_BPUSH_USER ?? '';

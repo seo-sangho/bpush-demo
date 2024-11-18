@@ -34,7 +34,7 @@ const useFcmToken = () => {
           // Retrieve the notification permission status
           const permission = await Notification.requestPermission();
           console.log('permission: ', permission);
-          if (getAgentSystem() === 'MACOS') {
+          if (getAgentSystem() !== 'MACOS') {
             setNotificationPermissionStatus(permission);
           }
 
