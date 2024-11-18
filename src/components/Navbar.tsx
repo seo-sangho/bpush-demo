@@ -20,24 +20,58 @@ export const Navbar = () => {
     setNotificationPermissionStatus,
   } = useFcmToken();
 
-  function getAgentSystem() {
-    if (!('navigator' in window)) {
-      return 'unknown';
+  function getBrowserInfo() {
+    let browserName = 'Unknown';
+    let browserVersion = 'Unknown';
+
+    if (typeof navigator === 'undefined') {
+      return { browserName, browserVersion };
     }
 
-    // Use the modern 'web hints' provied by
-    // 'userAgentData' if available, else use
-    // the deprecated 'platform' as fallback.
-    const platform = navigator.userAgent?.toLowerCase();
+    const userAgent = navigator.userAgent;
 
-    if (platform.includes('win')) return 'WINDOWS';
-    if (platform.includes('mac')) return 'MACOS';
-    if (platform.includes('linux')) return 'LINUX';
-    return 'unknown';
+    if (userAgent.includes('Firefox')) {
+      browserName = 'Firefox';
+      browserVersion = userAgent.match(/Firefox\/([\d.]+)/)?.[1] || 'Unknown';
+    } else if (userAgent.includes('Edg')) {
+      browserName = 'Edge';
+      browserVersion = userAgent.match(/Edg\/([\d.]+)/)?.[1] || 'Unknown';
+    } else if (userAgent.includes('Chrome')) {
+      browserName = 'Chrome';
+      browserVersion = userAgent.match(/Chrome\/([\d.]+)/)?.[1] || 'Unknown';
+    } else if (userAgent.includes('Safari')) {
+      browserName = 'Safari';
+      browserVersion = userAgent.match(/Version\/([\d.]+)/)?.[1] || 'Unknown';
+    } else if (userAgent.includes('Opera') || userAgent.includes('OPR')) {
+      browserName = 'Opera';
+      browserVersion =
+        userAgent.match(/(Opera|OPR)\/([\d.]+)/)?.[2] || 'Unknown';
+    } else if (userAgent.includes('MSIE') || userAgent.includes('Trident')) {
+      browserName = 'Internet Explorer';
+      browserVersion = userAgent.match(/(MSIE |rv:)([\d.]+)/)?.[2] || 'Unknown';
+    }
+
+    return { browserName, browserVersion };
   }
 
+  // function getAgentSystem() {
+  //   if (!('navigator' in window)) {
+  //     return 'unknown';
+  //   }
+
+  //   // Use the modern 'web hints' provied by
+  //   // 'userAgentData' if available, else use
+  //   // the deprecated 'platform' as fallback.
+  //   const platform = navigator.userAgent?.toLowerCase();
+
+  //   if (platform.includes('win')) return 'WINDOWS';
+  //   if (platform.includes('mac')) return 'MACOS';
+  //   if (platform.includes('linux')) return 'LINUX';
+  //   return 'unknown';
+  // }
+
   const getPermission = async () => {
-    if (getAgentSystem() === 'MACOS') {
+    if (getBrowserInfo().browserName === 'Safari') {
       if (notificationPermissionStatus !== 'granted') {
         toast({
           variant: 'destructive',
@@ -99,51 +133,58 @@ export const Navbar = () => {
         <div className='gap-3 nav__item mr-2 lg:flex ml-auto lg:ml-0 lg:order-2'>
           <ThemeChanger />
           <div className='hidden mr-3 lg:flex nav__item'>
-            {/* <Link
-              href='/'
-              className='px-6 py-2 text-white bg-indigo-600 rounded-md md:ml-5'
-            >
-              Get Started aa
-            </Link> */}
-            <Button
-              className='px-6 py-2 text-white bg-indigo-600 rounded-md md:ml-5'
-              onClick={async () => {
-                if (
-                  typeof window !== 'undefined' &&
-                  'serviceWorker' in navigator
-                ) {
-                  const messaging = getMessaging(firebaseApp);
+            {/* {getAgentSystem() !== 'MACOS' && ( */}
+            {getBrowserInfo().browserName !== 'Safari' && (
+              <Link
+                href='/'
+                className='px-6 py-2 text-white bg-indigo-600 rounded-md md:ml-5'
+              >
+                Get Started
+              </Link>
+            )}
 
-                  // Retrieve the notification permission status
-                  const permission = await Notification.requestPermission();
-                  console.log('updated permission: ', permission);
-                  setNotificationPermissionStatus(permission);
+            {/* {getAgentSystem() === 'MACOS' && ( */}
+            {getBrowserInfo().browserName === 'Safari' && (
+              <Button
+                className='px-6 py-2 text-white bg-indigo-600 rounded-md md:ml-5'
+                onClick={async () => {
+                  if (
+                    typeof window !== 'undefined' &&
+                    'serviceWorker' in navigator
+                  ) {
+                    const messaging = getMessaging(firebaseApp);
 
-                  // Check if permission is granted before retrieving the token
-                  if (permission === 'granted') {
-                    const currentToken = await getToken(messaging, {
-                      vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
-                    });
-                    console.log(`current token: ${currentToken}`);
-                    if (currentToken) {
-                      setToken(currentToken);
+                    // Retrieve the notification permission status
+                    const permission = await Notification.requestPermission();
+                    console.log('updated permission: ', permission);
+                    setNotificationPermissionStatus(permission);
 
-                      dispatchToken(currentToken, permission);
+                    // Check if permission is granted before retrieving the token
+                    if (permission === 'granted') {
+                      const currentToken = await getToken(messaging, {
+                        vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+                      });
+                      console.log(`current token: ${currentToken}`);
+                      if (currentToken) {
+                        setToken(currentToken);
+
+                        dispatchToken(currentToken, permission);
+                      } else {
+                        console.log(
+                          'No registration token available. Request permission to generate one.',
+                        );
+                      }
                     } else {
-                      console.log(
-                        'No registration token available. Request permission to generate one.',
-                      );
+                      console.log(`so may be here?? ${permission}`);
                     }
                   } else {
-                    console.log(`so may be here?? ${permission}`);
+                    console.log('so may be here?');
                   }
-                } else {
-                  console.log('so may be here?');
-                }
-              }}
-            >
-              Request Push Token
-            </Button>
+                }}
+              >
+                Request Push Token
+              </Button>
+            )}
           </div>
         </div>
 
