@@ -1,3 +1,5 @@
+// const withPWA = require('next-pwa')({ dest: 'public' });
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false, // stricMode는 일부 이벤트가 두번 호출됨
@@ -11,4 +13,5 @@ const nextConfig = {
   },
 };
 
+// module.exports = withPWA(nextConfig);
 module.exports = nextConfig;
