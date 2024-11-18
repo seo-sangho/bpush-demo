@@ -20,5 +20,22 @@ messaging.onBackgroundMessage(async (payload) => {
     icon: payload.notification.icon,
   };
 
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  const detectMobileDevice = (agent) => {
+    록;
+    const mobileRegex = [
+      /Android/i,
+      /iPhone/i,
+      /iPad/i,
+      /iPod/i,
+      /BlackBerry/i,
+      /Windows Phone/i,
+    ];
+
+    return mobileRegex.some((mobile) => agent.match(mobile));
+  };
+
+  // 모바일 경우에 두번 호출되므로 이를 방지하기 위해 모바일이 아닌 경우에만 호출되도
+  if (!detectMobileDevice()) {
+    self.registration.showNotification(notificationTitle, notificationOptions);
+  }
 });
