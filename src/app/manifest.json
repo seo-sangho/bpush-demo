@@ -1,7 +1,7 @@
 {
-  "name": "니콘내콘",
-  "short_name": "니콘내콘",
-  "description": "니콘내콘에서 기프티콘을 구매하세요",
+  "name": "B-Push",
+  "short_name": "B-Push",
+  "description": "B-Push for ToyProjects",
   "theme_color": "#ffc211",
   "background_color": "#ffffff",
   "display": "standalone",
