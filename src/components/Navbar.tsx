@@ -227,12 +227,55 @@ export const Navbar = () => {
                       {item}
                     </Link>
                   ))}
-                  <Link
+                  {/* <Link
                     href='/'
                     className='w-full px-6 py-2 mt-3 text-center text-white bg-indigo-600 rounded-md lg:ml-5'
                   >
-                    Get Started
-                  </Link>
+                    Get Started !!
+                  </Link> */}
+                  {getBrowserInfo().browserName === 'Safari' && (
+                    <Button
+                      className='px-6 py-2 text-white bg-indigo-600 rounded-md md:ml-5'
+                      onClick={async () => {
+                        if (
+                          typeof window !== 'undefined' &&
+                          'serviceWorker' in navigator
+                        ) {
+                          const messaging = getMessaging(firebaseApp);
+
+                          // Retrieve the notification permission status
+                          const permission =
+                            await Notification.requestPermission();
+                          console.log('updated permission: ', permission);
+                          setNotificationPermissionStatus(permission);
+
+                          // Check if permission is granted before retrieving the token
+                          if (permission === 'granted') {
+                            const currentToken = await getToken(messaging, {
+                              vapidKey:
+                                process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+                            });
+                            console.log(`current token: ${currentToken}`);
+                            if (currentToken) {
+                              setToken(currentToken);
+
+                              dispatchToken(currentToken, permission);
+                            } else {
+                              console.log(
+                                'No registration token available. Request permission to generate one.',
+                              );
+                            }
+                          } else {
+                            console.log(`so may be here?? ${permission}`);
+                          }
+                        } else {
+                          console.log('so may be here?');
+                        }
+                      }}
+                    >
+                      Request Push Token
+                    </Button>
+                  )}
                 </>
               </Disclosure.Panel>
             </>
