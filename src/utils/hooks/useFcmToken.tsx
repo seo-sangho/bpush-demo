@@ -9,6 +9,22 @@ const useFcmToken = () => {
   const [notificationPermissionStatus, setNotificationPermissionStatus] =
     useState('');
 
+  function getAgentSystem() {
+    if (!('navigator' in window)) {
+      return 'unknown';
+    }
+
+    // Use the modern 'web hints' provied by
+    // 'userAgentData' if available, else use
+    // the deprecated 'platform' as fallback.
+    const platform = navigator.userAgent?.toLowerCase();
+
+    if (platform.includes('win')) return 'WINDOWS';
+    if (platform.includes('mac')) return 'MACOS';
+    if (platform.includes('linux')) return 'LINUX';
+    return 'unknown';
+  }
+
   useEffect(() => {
     const retrieveToken = async () => {
       try {
@@ -18,7 +34,9 @@ const useFcmToken = () => {
           // Retrieve the notification permission status
           const permission = await Notification.requestPermission();
           console.log('permission: ', permission);
-          setNotificationPermissionStatus(permission);
+          if (getAgentSystem() === 'MACOS') {
+            setNotificationPermissionStatus(permission);
+          }
 
           // Check if permission is granted before retrieving the token
           if (permission === 'granted') {
@@ -27,7 +45,6 @@ const useFcmToken = () => {
             });
             if (currentToken) {
               setToken(currentToken);
-              // console.log('currentToken:', currentToken);
             } else {
               console.log(
                 'No registration token available. Request permission to generate one.',
@@ -35,7 +52,10 @@ const useFcmToken = () => {
             }
           } else {
             //
+            console.log(`so may be here?? ${permission}`);
           }
+        } else {
+          console.log('so may be here?');
         }
       } catch (error) {
         console.log('An error occurred while retrieving token:', error);
@@ -45,7 +65,12 @@ const useFcmToken = () => {
     retrieveToken();
   }, []);
 
-  return { fcmToken: token, notificationPermissionStatus };
+  return {
+    fcmToken: token,
+    notificationPermissionStatus,
+    setToken,
+    setNotificationPermissionStatus,
+  };
 };
 
 export default useFcmToken;

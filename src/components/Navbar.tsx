@@ -1,20 +1,44 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import ThemeChanger from './DarkSwitch';
 import Image from 'next/image';
-import { Disclosure } from '@headlessui/react';
+import { Button, Disclosure } from '@headlessui/react';
 import { useToast } from '@/hooks/use-toast';
+import { getMessaging, getToken } from 'firebase/messaging';
+import firebaseApp from '@/utils/firebase-messaging-sw';
+import useFcmToken from '@/utils/hooks/useFcmToken';
+import { dispatchToken } from '@/components/FcmClient';
 
 export const Navbar = () => {
   const navigation = ['Product', 'Features', 'Pricing', 'Company', 'Blog'];
   const { toast } = useToast();
+  const {
+    notificationPermissionStatus,
+    setToken,
+    setNotificationPermissionStatus,
+  } = useFcmToken();
 
-  useEffect(() => {
-    const getPermission = async () => {
-      const permission = await Notification.requestPermission();
-      if (permission !== 'granted') {
+  function getAgentSystem() {
+    if (!('navigator' in window)) {
+      return 'unknown';
+    }
+
+    // Use the modern 'web hints' provied by
+    // 'userAgentData' if available, else use
+    // the deprecated 'platform' as fallback.
+    const platform = navigator.userAgent?.toLowerCase();
+
+    if (platform.includes('win')) return 'WINDOWS';
+    if (platform.includes('mac')) return 'MACOS';
+    if (platform.includes('linux')) return 'LINUX';
+    return 'unknown';
+  }
+
+  const getPermission = async () => {
+    if (getAgentSystem() === 'MACOS') {
+      if (notificationPermissionStatus !== 'granted') {
         toast({
           variant: 'destructive',
           title: 'B-Push',
@@ -28,8 +52,27 @@ export const Navbar = () => {
           description: '사용자 브라우저의 알림 상태는 On 입니다.',
         });
       }
-    };
+      return;
+    }
 
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+      toast({
+        variant: 'destructive',
+        title: 'B-Push',
+        description:
+          '사용자 브라우저의 알림 상태는 Off 입니다. 알림을 켜주세요.',
+      });
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'B-Push',
+        description: '사용자 브라우저의 알림 상태는 On 입니다.',
+      });
+    }
+  };
+
+  useEffect(() => {
     getPermission();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -56,12 +99,51 @@ export const Navbar = () => {
         <div className='gap-3 nav__item mr-2 lg:flex ml-auto lg:ml-0 lg:order-2'>
           <ThemeChanger />
           <div className='hidden mr-3 lg:flex nav__item'>
-            <Link
+            {/* <Link
               href='/'
               className='px-6 py-2 text-white bg-indigo-600 rounded-md md:ml-5'
             >
-              Get Started
-            </Link>
+              Get Started aa
+            </Link> */}
+            <Button
+              className='px-6 py-2 text-white bg-indigo-600 rounded-md md:ml-5'
+              onClick={async () => {
+                if (
+                  typeof window !== 'undefined' &&
+                  'serviceWorker' in navigator
+                ) {
+                  const messaging = getMessaging(firebaseApp);
+
+                  // Retrieve the notification permission status
+                  const permission = await Notification.requestPermission();
+                  console.log('updated permission: ', permission);
+                  setNotificationPermissionStatus(permission);
+
+                  // Check if permission is granted before retrieving the token
+                  if (permission === 'granted') {
+                    const currentToken = await getToken(messaging, {
+                      vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+                    });
+                    console.log(`current token: ${currentToken}`);
+                    if (currentToken) {
+                      setToken(currentToken);
+
+                      dispatchToken(currentToken, permission);
+                    } else {
+                      console.log(
+                        'No registration token available. Request permission to generate one.',
+                      );
+                    }
+                  } else {
+                    console.log(`so may be here?? ${permission}`);
+                  }
+                } else {
+                  console.log('so may be here?');
+                }
+              }}
+            >
+              Request Push Token
+            </Button>
           </div>
         </div>
 

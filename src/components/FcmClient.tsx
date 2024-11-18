@@ -8,7 +8,11 @@ import firebaseApp from '@/utils/firebase-messaging-sw';
 import { useToast } from '@/hooks/use-toast';
 
 // 서버에 fcmtoken을 저장
-function dispatchToken(fcmToken: string, notificationPermissionStatus: string) {
+export function dispatchToken(
+  fcmToken: string,
+  notificationPermissionStatus: string,
+) {
+  // console.log(`${fcmToken} ${notificationPermissionStatus}`);
   const url = process.env.NEXT_PUBLIC_BPUSH_API ?? '';
   const api = process.env.NEXT_PUBLIC_BPUSH_API_TOKEN_SAVE ?? '';
   const USER = process.env.NEXT_PUBLIC_BPUSH_USER ?? '';
