@@ -16,12 +16,14 @@ export const Navbar = () => {
       const permission = await Notification.requestPermission();
       if (permission !== 'granted') {
         toast({
+          variant: 'destructive',
           title: 'B-Push',
           description:
             '사용자 브라우저의 알림 상태는 Off 입니다. 알림을 켜주세요.',
         });
       } else {
         toast({
+          variant: 'destructive',
           title: 'B-Push',
           description: '사용자 브라우저의 알림 상태는 On 입니다.',
         });
