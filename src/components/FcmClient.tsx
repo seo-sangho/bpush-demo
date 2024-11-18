@@ -1,11 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import {
-  getMessaging,
-  onMessage,
-  onBackgroundMessage,
-} from 'firebase/messaging';
+import { getMessaging, onMessage } from 'firebase/messaging';
 import axios from 'axios';
 import useFcmToken from '@/utils/hooks/useFcmToken';
 import firebaseApp from '@/utils/firebase-messaging-sw';
